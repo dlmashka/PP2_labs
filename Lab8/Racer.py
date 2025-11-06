@@ -15,7 +15,7 @@ pygame.init()                                            #starting pygame
 screen = pygame.display.set_mode((WIDTH, HEIGHT))        #creating a screen 
 clock = pygame.time.Clock()                              #frequency of updates 
 pygame.display.set_caption("RACER")                      #screen name 
-road = pygame.image.load(r'C:\Users\Viktoria\Desktop\pp\road.png')                 #background loading 
+road = pygame.image.load(r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\Lab8_2version\street.png')                 #background loading 
 font = pygame.font.SysFont(None, 50)        #fonts 
 defeat_font = pygame.font.SysFont(None, 150)
 a = []                                               #points counter 
@@ -23,7 +23,7 @@ a = []                                               #points counter
 class Player(pygame.sprite.Sprite): 
     def __init__(self): 
         super().__init__() 
-        self.image = pygame.image.load(r'C:\Users\Viktoria\Desktop\pp\pl.png')              #loading the player's car 
+        self.image = pygame.image.load(r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\Lab8_2version\player.png')              #loading the player's car 
         self.surf = pygame.Surface((40, 60))                       #creating a surface for an object with size 
         self.rect = self.surf.get_rect(center=(400, 500))      #creating a rectangle as the surface of an object 
         self.speed = 5                                         #number of steps on which car will move                                     #Amount of steps 
@@ -47,7 +47,7 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite): #Enemy car 
     def __init__(self): 
         super().__init__() 
-        self.image = pygame.image.load(r'C:\Users\Viktoria\Desktop\pp\en.png') 
+        self.image = pygame.image.load(r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\Lab8_2version\enemy.png')          #loading the enemy car
         self.surf = pygame.Surface((40, 60)) 
         self.rect = self.surf.get_rect(center=(random.randint(0, WIDTH - 40), -100))   #the appearance of objects outside the screen 
         self.speed = random.randint(3, 5)                                              #random speed in the specified range 
@@ -73,7 +73,7 @@ class Coin(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect(center=(random.randint(0, WIDTH - 40), -100)) 
         self.speed = random.randint(1, 5) 
         self.random_number = random.randint(0, 5) 
-        self.images = [pygame.image.load(r'C:\Users\Viktoria\Desktop\pp\coin.jpg'), pygame.image.load(r'C:\Users\Viktoria\Desktop\pp\sup.png')] 
+        self.images = [pygame.image.load(r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\Lab8_2version\coin_1.png'), pygame.image.load(r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\Lab8_2version\coin_2.png')] 
         self.supcoin() 
  
     def move(self): 
