@@ -1,11 +1,12 @@
-import random
-import time
+import random #importing the random module  
+import time 
 
-import pygame
+import pygame 
 
-pygame.init()
-WIDTH, HEIGHT = 800, 800
-BLACK = (0, 0, 0)
+pygame.init()  # запуск всех модулей pygame, чтобы можно было создавать окно и использовать графику
+
+WIDTH, HEIGHT = 800, 800  
+BLACK = (0, 0, 0) 
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -16,17 +17,17 @@ clock = pygame.time.Clock()
 BLOCK_SIZE = 40
 pygame.display.set_caption('Snake v0')
 
-
+#Точка на сетке
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-
+#Еда для змейки
 class Food:
     def __init__(self, x, y, type):
         self.location = Point(x, y)
-        self.type = type #if 1-normal if 2-big
+        self.type = type #1 - обычная еда, 2 - еда для роста
         self.time = time.time()
 
     @property
@@ -61,7 +62,7 @@ class Food:
                 )
             )
 
-
+#Змейка
 class Snake:
     def __init__(self):
         self.points = [
@@ -72,9 +73,10 @@ class Snake:
         self.food_eaten = 0
         self.level = 0
 
+#Рисуем змейку
     def update(self):
         head = self.points[0]
-
+#head - голова змейки, тело - остальное
         pygame.draw.rect(
             SCREEN,
             RED,
@@ -84,7 +86,7 @@ class Snake:
                 BLOCK_SIZE,
                 BLOCK_SIZE,
             )
-        )
+        )#body - тело змейки
         for body in self.points[1:]:
             pygame.draw.rect(
                 SCREEN,
@@ -100,14 +102,14 @@ class Snake:
         self.occupied_squares = set() # Clear set of occupied squares
         for point in self.points:
             self.occupied_squares.add((point.x, point.y))
-
+#Движение змейки 
     def move(self, dx, dy):
         for idx in range(len(self.points) - 1, 0, -1):
             self.points[idx].x = self.points[idx - 1].x
-            self.points[idx].y = self.points[idx - 1].y
+            self.points[idx].y = self.points[idx - 1].y #Каждый сегмент принимает позицию предыдущего. С конца к началу.
 
         self.points[0].x += dx
-        self.points[0].y += dy
+        self.points[0].y += dy #Голова змейки двигается в направлении (dx, dy)  
 
         head = self.points[0]
         if head.x > WIDTH // BLOCK_SIZE:
@@ -117,8 +119,9 @@ class Snake:
         elif head.y > HEIGHT // BLOCK_SIZE:
             return False
         elif head.y < 0:
-            return False
-
+            return False #Проверка выхода за границы. Если вышли — возвращаем False.
+        
+#Проверка съела ли еду
     def check_collision(self, food):
         if self.points[0].x != food.x:
             return False
@@ -126,13 +129,14 @@ class Snake:
             return False
         return True
 
-
+#Рисуем сетку
 def draw_grid():
     for x in range(0, WIDTH, BLOCK_SIZE):
         pygame.draw.line(SCREEN, WHITE, (x, 0), (x, HEIGHT), width=1)
     for y in range(0, HEIGHT, BLOCK_SIZE):
         pygame.draw.line(SCREEN, WHITE, (0, y), (WIDTH, y), width=1)
 
+#Счётчик еды и уровень
 def get_counter_text(snake):
     counter = snake.food_eaten
     level = snake.level
@@ -145,18 +149,20 @@ def get_counter_text(snake):
     SCREEN.blit(count_text, count_text_rect)
     SCREEN.blit(level_text, level_text_rect)
 
+#Текст «END» при проигрыше
 def get_end_text():
     font = pygame.font.SysFont('Arial', 100)
     end_text = font.render('END', True, RED)
-    end_text_rect = end_text.get_rect(center=(WIDTH//2, HEIGHT//2))
-    SCREEN.blit(end_text, end_text_rect)
+    end_text_rect = end_text.get_rect(center=(WIDTH//2, HEIGHT//2)) #центрируем текст
+    SCREEN.blit(end_text, end_text_rect) #рисуем текст на экран
 
+#Генерация позиции еды
 def generate_food_position(snake): 
     x_food = random.randint(0, WIDTH // BLOCK_SIZE - 1) 
-    y_food = random.randint(0, HEIGHT // BLOCK_SIZE - 1) 
-    postion = (x_food, y_food)
+    y_food = random.randint(0, HEIGHT // BLOCK_SIZE - 1) #выбирает случайную клетку для еды по горизонтали и вертикали.
+    postion = (x_food, y_food) # Проверка, чтобы еда не появилась на змейке или за границами экрана
 
-    if postion in snake.occupied_squares:
+    if postion in snake.occupied_squares: #если еда появляется на змейке, то генерируем новую позицию
         return generate_food_position(snake)
     elif x_food > WIDTH // BLOCK_SIZE: 
         return generate_food_position(snake)
@@ -167,19 +173,21 @@ def generate_food_position(snake):
     elif y_food < 0: 
         return generate_food_position(snake) 
 
-    return x_food, y_food
+    return x_food, y_food #возвращаем координаты еды
 
-def main():
+def main(): #главная функция
     running = True
     snake = Snake()
     food = Food(5, 5, 1)
     dx, dy = 0, 0
-    multip_time = 1
+    multip_time = 1.5
 
+#Цикл игры 
     while running:
         SCREEN.fill(BLACK)
         get_counter_text(snake)
 
+#Обработка нажатий клавиш
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -191,12 +199,13 @@ def main():
                 elif event.key == pygame.K_LEFT:
                     dx, dy = -1, 0
                 elif event.key == pygame.K_RIGHT:
-                    dx, dy = +1, 0
+                    dx, dy = +1, 0 #движение змейки в зависимости от нажатой клавиши
 
+# Двигаем змейку, проверяем выход за границы
         if(snake.move(dx, dy) == False):
             get_end_text()
             
-
+# Съела ли еду
         if snake.check_collision(food):
             if(food.type == 2):
                 snake.points.append(Point(food.x, food.y))
@@ -221,6 +230,7 @@ def main():
                 snake.level += 1
                 multip_time *= 1.5
 
+#Обновление еды по времени
         if(time.time() - food.time > 5):
             x_food, y_food = generate_food_position(snake)
             type_of_food = random.randint(1, 10) 
@@ -233,10 +243,10 @@ def main():
             else:
                 food.type = 2
 
+#Рисуем все объекты
         food.update()
         snake.update()
         draw_grid()
-
         pygame.display.flip()
         clock.tick(3*multip_time)
 
