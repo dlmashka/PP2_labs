@@ -10,8 +10,7 @@ WHITE = (255, 255, 255)
 font = pygame.font.Font(None, 35)
 
 #путь к папке с музыкой
-path = r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\MickeyClock_2\Music\\'
-
+path = r'C:\Users\User\OneDrive\Документы\4 курс 7 семестр\Принципы программирования II Нүптебек Е.Н\Лабки\Lab 7\Music\\'
 songs = [name for name in os.listdir(path) if os.path.isfile(os.path.join(path, name))]
 if not songs:
     print("xxx В папке нет музыкальных файлов! xxx")
