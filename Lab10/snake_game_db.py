@@ -1,72 +1,53 @@
-"""snake_game_db.py
-DB helper for Snake user and user_score tables.
-Edit DATABASE_CONFIG to your PostgreSQL server.
-"""
+# snake_game_db.py
 import psycopg2
-from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
-import json
 
+# - DATABASE -
 DATABASE_CONFIG = {
     'host': 'localhost',
     'port': 5432,
-    'dbname': 'lab10_db',
-    'user': 'labuser',
-    'password': 'labpass'
+    'dbname': 'Lab10_PP2',
+    'user': 'postgres',
+    'password': 'Dimash2406'
 }
 
 @contextmanager
 def get_conn_cursor():
+    """Контекстный менеджер для работы с базой"""
     conn = psycopg2.connect(**DATABASE_CONFIG)
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur = conn.cursor()
         yield conn, cur
         conn.commit()
-    except Exception:
+    except Exception as e:
         conn.rollback()
+        print("Ошибка:", e)
         raise
     finally:
         cur.close()
         conn.close()
 
-def create_user_tables():
-    sql = """
+def create_tables():
+    """Создаёт таблицы users и user_scores, если их нет"""
+    sql_users = """
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR(100) UNIQUE NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        username VARCHAR(50) UNIQUE NOT NULL
     );
-    CREATE TABLE IF NOT EXISTS user_score (
+    """
+    sql_scores = """
+    CREATE TABLE IF NOT EXISTS user_scores (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id),
-        score INTEGER,
-        level INTEGER,
-        saved_state JSONB,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        user_id INT REFERENCES users(id),
+        score INT DEFAULT 0,
+        level INT DEFAULT 1,
+        saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """
     with get_conn_cursor() as (conn, cur):
-        cur.execute(sql)
+        cur.execute(sql_users)
+        cur.execute(sql_scores)
+        print("Таблицы users и user_scores успешно созданы!")
 
-def get_or_create_user(username):
-    with get_conn_cursor() as (conn, cur):
-        cur.execute('SELECT id FROM users WHERE username = %s', (username,))
-        row = cur.fetchone()
-        if row:
-            return row['id']
-        cur.execute('INSERT INTO users (username) VALUES (%s) RETURNING id', (username,))
-        row = cur.fetchone()
-        return row['id']
-
-def get_latest_score_for_user(user_id):
-    with get_conn_cursor() as (conn, cur):
-        cur.execute('SELECT score, level, saved_state FROM user_score WHERE user_id = %s ORDER BY id DESC LIMIT 1', (user_id,))
-        row = cur.fetchone()
-        return row
-
-def save_user_score(user_id, score, level, saved_state_dict):
-    sql = 'INSERT INTO user_score (user_id, score, level, saved_state) VALUES (%s, %s, %s, %s) RETURNING id'
-    with get_conn_cursor() as (conn, cur):
-        cur.execute(sql, (user_id, score, level, json.dumps(saved_state_dict)))
-        row = cur.fetchone()
-        return row['id'] if row else None
+if __name__ == '__main__':
+    create_tables()

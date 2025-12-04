@@ -1,14 +1,10 @@
-"""phonebook_app.py
-Simple CLI for PhoneBook lab.
-Usage: run and follow menu prompts.
-"""
+# phonebook_app.py
 import csv
-import json
 from phonebook_db import create_tables, insert_contact, query_contacts, update_contact_by_phone, delete_contact_by_phone, delete_contact_by_name
 
 def load_from_csv(path):
     count = 0
-    with open(path, newline='', encoding='utf-8') as f:
+    with open(path, newline='', encoding='u3tf-8') as f:
         reader = csv.DictReader(f)
         for r in reader:
             first_name = r.get('first_name') or r.get('name') or ''
@@ -36,7 +32,6 @@ def show_contacts():
     rows = query_contacts()
     for r in rows:
         print(f"{r['id']}: {r['first_name']} {r['last_name']} - {r['phone']} ({r['email']})")
-
 
 def search_by_name_prefix(prefix):
     rows = query_contacts('first_name ILIKE %s', (prefix + '%',))

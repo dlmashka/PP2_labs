@@ -1,7 +1,13 @@
-"""phonebook_db.py
-Database helper for PhoneBook lab.
-Edit DATABASE_CONFIG to match your PostgreSQL credentials.
-"""
+# DB_CONFIG = {
+#     "dbname": "Lab_11_PP2",
+#     "user": "postgres",
+#     "password": "Dimash2406",
+#     "host": "localhost",
+#     "port": 5432
+# }
+
+# phonebook_db.py
+# sample_contacts.csv
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
@@ -9,9 +15,9 @@ from contextlib import contextmanager
 DATABASE_CONFIG = {
     'host': 'localhost',
     'port': 5432,
-    'dbname': 'lab10_db',
-    'user': 'labuser',
-    'password': 'labpass'
+    'dbname': 'Lab10_PP2',
+    'user': 'postgres',
+    'password': 'Dimash2406'
 }
 
 @contextmanager
@@ -55,7 +61,6 @@ def insert_contact(first_name, last_name, phone, email=None):
         return row['id'] if row else None
 
 def update_contact_by_phone(phone, new_first_name=None, new_last_name=None, new_phone=None, new_email=None):
-    # Build dynamic update
     fields = []
     values = []
     if new_first_name is not None:
